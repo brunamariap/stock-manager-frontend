@@ -49,7 +49,8 @@ export default function CreateProduct() {
 
   return (
     <div className={styles.container}>
-
+      
+      <a><Link href="/product">Voltar</Link></a>
       <h1>Criar produto</h1>
       <p>Nome <input type='text' onChange={(name) => setName(name.target.value)}/></p>
       <p>Valor <input type='number' onChange={(unitary_value) => setValue(unitary_value.target.value)}/></p>
