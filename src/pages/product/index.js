@@ -54,6 +54,7 @@ export default function Home() {
             <p>Quantidade: {item.amount}</p>
             <p>Deletar produto</p>
             <p><Link href={`/product/${item.id}`}>Editar Produto</Link></p>
+            <p><Link href={`/product/sell/${item.id}`}>Vender Produto</Link></p>
             <br></br>
           </div>
         ))

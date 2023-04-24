@@ -27,7 +27,7 @@ export default function EditProduct() {
 
       setName(data.name)
       setValue(data.unitary_value)
-      setAmount(value.amount)
+      setAmount(data.amount)
 
       console.log(data);
   
