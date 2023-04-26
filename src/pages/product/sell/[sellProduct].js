@@ -20,7 +20,7 @@ export default function sellProduct() {
   const [soldAmount, setSoldAmount] = useState(0);
   const [finalValue, setFinalValue] = useState(0.0);
 
-  const URL_API = `http://127.0.0.1:8000/produtos/${productId}`;
+  const URL_API = `http://127.0.0.1:8000/produtos/${productId}/`;
   const URL_API_PRODUCT_SOLD = "http://127.0.0.1:8000/produtos-vendidos/";
   const getData = async () => {
     try {
@@ -45,12 +45,14 @@ export default function sellProduct() {
     try {
       setLoading(true);
       
-      setAmount(amount - soldAmount)
-
+      setFinalValue(soldAmount * data.unitary_value)
+      console.log('qtd:',amount)
+      console.log(finalValue)
+      
       const dataTemp = {
-        product: productId,
+        product: URL_API,
         sold_amount: soldAmount,
-        final_value: finalValue * soldAmount,
+        final_value: finalValue,
       };
 
       const response = await fetch(URL_API_PRODUCT_SOLD, {
@@ -61,11 +63,24 @@ export default function sellProduct() {
         .then((response) => response.json())
         .then((json) => console.log(json))
         .catch((err) => console.log(err));
+        
+        const dataT = await response.json();
+        if (!dataT) throw "Error";
+        setDataProductS(dataT);
+        
+      setAmount(data.amount - soldAmount)
 
-      const dataT = await response.json();
-      if (!dataT) throw "Error";
-      setDataProductS(dataT);
-      
+      edit()
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const edit = async () => {
+    try {
       const dataEdit = {
         name: data.name,
         unitary_value: data.unitary_value,
@@ -81,9 +96,9 @@ export default function sellProduct() {
         .then((json) => console.log(json))
         .catch((err) => console.log(err))
       
-      const dataAtual = await response.json();
+      const dataAtual = await responseEdit.json();
       if (!dataAtual) throw "Error";
-      dataTest(dataAtual);
+      setDataTest(dataAtual);
 
       console.log(dataAtual);
     } catch (error) {
@@ -91,7 +106,7 @@ export default function sellProduct() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
     getData();
@@ -110,10 +125,10 @@ export default function sellProduct() {
           <p>Produto: {data.name}</p>
           <p>Quantidade disponível: {data.amount}</p>
           <p>
-            Digite a quantidade que deseja vender{" "}
+            Digite a quantidade que deseja vender
             <input
-              type="text"
-              onChange={(amount) => setSoldAmount(amount.target.value)}
+              type="number"
+              onChange={(qtd) => setSoldAmount(qtd.target.value)}
               max={data.amount}
             />
           </p>
