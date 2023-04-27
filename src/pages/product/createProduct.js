@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import axios from "axios";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,17 +26,10 @@ export default function CreateProduct() {
         amount: amount
       }
 
-      const response = await fetch(URL_API, {
-        method:'POST', 
-        body: JSON.stringify(dataTemp) ,
-        headers: {"Content-type": "application/json; chasert=UTF-8"}
-      })
-        .then((response) => response.json())
-        .then((json) => console.log(json))
-        .catch((err) => console.log(err))
+      const response = await axios.post(URL_API, dataTemp)
+      console.log(response)
 
-
-      const data = await response.json()
+      //const data = await response.json()
       if (!data) throw 'Error'
       setData(data)
       console.log(data)

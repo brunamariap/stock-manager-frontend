@@ -3,6 +3,7 @@ import styles from '@/styles/Home.module.css'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import axios from "axios"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,11 +19,12 @@ export default function Home() {
     try {
       setLoading(true)
 
-      const response = await fetch(URL_API)
-      const data = await response.json()
-      if (!data) throw 'Error'
-      setData(data)
-      console.log(data)
+      const response = await axios.get(URL_API)
+
+      //const data = await response.json()
+      if (!response.data) throw 'Error'
+      setData(response.data)
+      console.log(response.data)
       
     } catch (error) {
       console.log(error)

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function sellProduct() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function sellProduct() {
   const [amount, setAmount] = useState(0);
 
   const [soldAmount, setSoldAmount] = useState(0);
-  const [finalValue, setFinalValue] = useState(0.0);
+  const [finalValue, setFinalValue] = useState(0);
 
   const URL_API = `http://127.0.0.1:8000/produtos/${productId}/`;
   const URL_API_PRODUCT_SOLD = "http://127.0.0.1:8000/produtos-vendidos/";
@@ -45,32 +46,32 @@ export default function sellProduct() {
     try {
       setLoading(true);
       
-      setFinalValue(soldAmount * data.unitary_value)
+      const valorFinal = soldAmount * data.unitary_value
+      console.log(data.unitary_value)
       console.log('qtd:',amount)
       console.log(finalValue)
       
       const dataTemp = {
         product: URL_API,
         sold_amount: soldAmount,
-        final_value: finalValue,
+        final_value: valorFinal,
       };
 
-      const response = await fetch(URL_API_PRODUCT_SOLD, {
-        method: "POST",
-        body: JSON.stringify(dataTemp),
-        headers: { "Content-type": "application/json; chasert=UTF-8" },
-      })
-        .then((response) => response.json())
-        .then((json) => console.log(json))
-        .catch((err) => console.log(err));
-        
-        const dataT = await response.json();
-        if (!dataT) throw "Error";
-        setDataProductS(dataT);
-        
-      setAmount(data.amount - soldAmount)
+      const response = await axios.post(URL_API_PRODUCT_SOLD, dataTemp)
+      
+      console.log('Produto vendido:', response)
 
-      edit()
+      const quantidadeAtual = amount - soldAmount
+
+      const dataEdit = {
+        name: data.name,
+        unitary_value: data.unitary_value,
+        amount: quantidadeAtual,
+      };
+
+      const responseEdit = await axios.put(URL_API, dataEdit)
+      
+      console.log('editado', responseEdit)
 
     } catch (error) {
       console.log(error);
@@ -81,6 +82,8 @@ export default function sellProduct() {
 
   const edit = async () => {
     try {
+      console.log(amount)
+      
       const dataEdit = {
         name: data.name,
         unitary_value: data.unitary_value,
